@@ -19,8 +19,10 @@ function ScreenSource() {
         alert('Something went wrong. Server connection problem.');
         return;
       }
-      let data = await rawdata.json();
-      if (!data.sources || data.sources.length < 1) {
+      let response = await rawdata.json();
+      let data = response.data
+      if (!data.sources) {
+        console.log(data)
         alert('Something went wrong. When obtaining news.');
         return;
       }
@@ -60,7 +62,7 @@ function ScreenSource() {
     <div>
       <Nav />
 
-      <div className={styles['Banner']} >
+      <div className={'Banner'} >
         <img src={'/images/icons8-france-96.png'} className={styles['banner-flag']} alt='FR flag' onClick={() => handleFlagClick('fr')} />
         <img alt='GB flag' src={'/images/icons8-great-britain-96.png'} className={styles['banner-flag']} onClick={() => handleFlagClick('gb')} />
       </div>

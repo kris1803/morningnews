@@ -1,5 +1,5 @@
 import React from 'react';
-import {Menu, Icon} from 'antd'
+import { Menu, Icon } from 'antd'
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -7,7 +7,6 @@ function Nav(props) {
   let handleLogout = () => {
     props.logoutUser();
   }
-
 
   return (
     <nav >
@@ -29,7 +28,7 @@ function Nav(props) {
 
         <Menu.Item key="app">
           <Link to={'/'}>
-          <Icon type="logout" onClick={() => handleLogout()}/>
+          <Icon type="logout" onClick={handleLogout} />
             Logout
           </Link>
         </Menu.Item>
