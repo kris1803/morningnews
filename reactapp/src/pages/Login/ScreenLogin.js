@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Input, Button } from 'antd';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
+import styles from './login.module.css';
 
 function ScreenLogin(props) {
   const [signUpUsername, setSignUpUsername] = useState('');
@@ -14,7 +15,7 @@ function ScreenLogin(props) {
 
   let handleSubmitSignUp = async () => {
     try {
-      let rawdata = await fetch('/sign-up', {
+      let rawdata = await fetch('/users/sign-up', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -42,7 +43,8 @@ function ScreenLogin(props) {
     }
   };
   let handleSubmitSignIn = async () => {
-    let rawdata = await fetch('/sign-in', {
+    try {
+    let rawdata = await fetch('/users/sign-in', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -68,31 +70,34 @@ function ScreenLogin(props) {
       setIsLogin(false);
       alert(data.error);
     }
-
+  } catch (err) {
+    console.log(err);
+    alert('Server connection error.')
+  }
   }
 
   if (!isLogin) {
     return (
-      <div className="Login-page" >
+      <div className={styles['login-page']} >
 
         {/* SIGN-IN */}
-        <div className="Sign">
+        <div className={styles.sign}>
 
-          <Input className="Login-input" placeholder="email" value={signInEmail} onChange={(e) => setSignInEmail(e.target.value)} />
+          <Input className={styles['login-input']} placeholder="email" value={signInEmail} onChange={(e) => setSignInEmail(e.target.value)} />
 
-          <Input.Password className="Login-input" placeholder="password" value={signInPassword} onChange={(e) => setSignInPassword(e.target.value)} />
+          <Input.Password className={styles['login-input']} placeholder="password" value={signInPassword} onChange={(e) => setSignInPassword(e.target.value)} />
 
           <Button style={{ width: '80px' }} type="primary" onClick={() => handleSubmitSignIn()} >Sign-in</Button>
 
         </div>
 
         {/* SIGN-UP */}
-        <div className="Sign">
+        <div className={styles.sign}>
 
-          <Input className="Login-input" placeholder="Username" value={signUpUsername} onChange={(e) => setSignUpUsername(e.target.value)} />
-          <Input className="Login-input" placeholder="email@mail.com" value={signUpEmail} onChange={(e) => setSignUpEmail(e.target.value)} />
+          <Input className={styles['login-input']} placeholder="Username" value={signUpUsername} onChange={(e) => setSignUpUsername(e.target.value)} />
+          <Input className={styles['login-input']} placeholder="email@mail.com" value={signUpEmail} onChange={(e) => setSignUpEmail(e.target.value)} />
 
-          <Input.Password className="Login-input" placeholder="password" value={signUpPassword} onChange={(e) => setSignUpPassword(e.target.value)} />
+          <Input.Password className={styles['login-input']} placeholder="password" value={signUpPassword} onChange={(e) => setSignUpPassword(e.target.value)} />
           <Button style={{ width: '80px' }} type="primary" onClick={() => handleSubmitSignUp()} >Sign-up</Button>
         </div>
       </div>
