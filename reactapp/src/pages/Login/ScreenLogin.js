@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Input, Button } from 'antd';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styles from './login.module.css';
 
@@ -9,13 +9,19 @@ function ScreenLogin(props) {
   const [signUpEmail, setSignUpEmail] = useState('');
   const [signUpPassword, setSignUpPassword] = useState('');
   const [isLogin, setIsLogin] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [signInEmail, setSignInEmail] = useState('');
   const [signInPassword, setSignInPassword] = useState('');
 
   let handleSubmitSignUp = async (e) => {
     e.preventDefault();
+    if (signUpUsername.length === 0 || signUpEmail.length === 0 || signUpPassword.length === 0) {
+      alert('Please fill all fields');
+      return;
+    }
     try {
+      setLoading(true);
       let rawdata = await fetch('/users/sign-up', {
         method: 'POST',
         headers: {
@@ -29,6 +35,7 @@ function ScreenLogin(props) {
       });
       let data = await rawdata.json();
       if (data.success) {
+        setLoading(false);
         setIsLogin(true);
         for (let i = 0; i < data.user.articles.length; i++) {
           props.addToWishlist(data.user.articles[i]);
@@ -36,16 +43,24 @@ function ScreenLogin(props) {
       } else {
         console.log('setting is login to false')
         setIsLogin(false);
+        setLoading(false);
         alert(data.error);
       }
     } catch (err) {
+      setLoading(false);
       console.log(err);
       alert('Server connection error. Try later.')
     }
   };
   let handleSubmitSignIn = async (event) => {
     event.preventDefault();
+
+    if (signInEmail === '' || signInPassword === '') {
+      return;
+    }
+
     try {
+      setLoading(true);
       let rawdata = await fetch('/users/sign-in', {
         method: 'POST',
         headers: {
@@ -56,12 +71,14 @@ function ScreenLogin(props) {
       let data;
       if (!rawdata.ok) {
         data = { success: false, error: 'Not connected to server. try later.' };
+        setLoading(false);
       } else {
         //console.log(rawdata)
         data = await rawdata.json();
       }
       //console.log(data)
       if (data.success) {
+        setLoading(false);
         setIsLogin(true);
         let user = data.user;
         props.loginUser(user);
@@ -69,10 +86,12 @@ function ScreenLogin(props) {
           props.addWishList(data.user.articles[i]);
         }
       } else {
+        setLoading(false);
         setIsLogin(false);
         alert(data.error);
       }
     } catch (err) {
+      setLoading(false);
       console.log(err);
       alert('Server connection error.')
     }
@@ -90,7 +109,7 @@ function ScreenLogin(props) {
 
             <Input.Password className={styles['login-input']} placeholder="password" value={signInPassword} onChange={(e) => setSignInPassword(e.target.value)} />
 
-            <Button style={{ width: '80px' }} type="primary" onClick={handleSubmitSignIn} >Sign-in</Button>
+            <Button htmlType='submit' type='primary' onClick={handleSubmitSignIn} loading={loading} >Sign-in</Button>
 
           </form>
 
@@ -101,14 +120,14 @@ function ScreenLogin(props) {
             <Input className={styles['login-input']} placeholder="email@mail.com" value={signUpEmail} onChange={(e) => setSignUpEmail(e.target.value)} />
 
             <Input.Password className={styles['login-input']} placeholder="password" value={signUpPassword} onChange={(e) => setSignUpPassword(e.target.value)} />
-            <Button style={{ width: '80px' }} type="primary" onClick={handleSubmitSignUp} >Sign-up</Button>
+            <Button htmlType='submit' type='primary' loading={loading} onClick={handleSubmitSignUp} >Sign-up</Button>
           </form>
         </div>
       </div>
     );
   } else {
     return (
-      <Redirect to='/source' />
+      <Navigate to='/source' />
     )
   }
 }

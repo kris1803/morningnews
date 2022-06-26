@@ -1,1 +1,4 @@
-- change architecture to make backend communicate with api
+DONE - change architecture to make backend communicate with api
+- protect backend routes to only logged users
+- store articles in db for each day
+- make frontend load articles only once and store them in redux

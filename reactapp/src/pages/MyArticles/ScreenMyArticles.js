@@ -1,13 +1,15 @@
-import React from 'react';
-import { Card, Icon } from 'antd';
+import React, { useMemo, useCallback } from 'react';
+import { DeleteOutlined, ReadOutlined } from '@ant-design/icons';
+import { Card } from 'antd';
 import Nav from '../../components/Nav';
 import { connect } from 'react-redux';
+import { Navigate } from 'react-router-dom';
 
 const { Meta } = Card;
 
 function ScreenMyArticles(props) {
 
-  let deleteArticle = async (article) => {
+  let deleteArticle = useCallback(async (article) => {
     // make delete fetch to '/wishlist-article' with token and article with json encode
     try {
       let rawdata = await fetch(`/wishlist-article`, {
@@ -28,36 +30,43 @@ function ScreenMyArticles(props) {
       console.log(error);
       alert('Something went wrong. Server connection problem.');
     }
-  }
+  }, [props]);
 
-  let articles = props.wishlist.map(article => {
-    return (
-      <Card
-        style={{
-          width: 300,
-          margin: '15px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between'
-        }}
-        cover={
-          <img
-            alt="example"
-            src={article.urlToImage}
+  let articles = useMemo(() => {
+    props.wishlist.map(article => {
+      return (
+        <Card
+          style={{
+            width: 300,
+            margin: '15px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between'
+          }}
+          key={article.title}
+          cover={
+            <img
+              alt="example"
+              src={article.urlToImage}
+            />
+          }
+          actions={[
+            <ReadOutlined key="ellipsis2" />,
+            <DeleteOutlined key="ellipsis" onClick={() => deleteArticle(article)} />
+          ]}
+        >
+          <Meta
+            title={article.title}
+            description={article.description}
           />
-        }
-        actions={[
-          <Icon type="read" key="ellipsis2" />,
-          <Icon type="delete" key="ellipsis" onClick={() => deleteArticle(article)} />
-        ]}
-      >
-        <Meta
-          title={article.title}
-          description={article.description}
-        />
-      </Card>
-    )
-  })
+        </Card>
+      );
+    })
+  }, [props.wishlist, deleteArticle]);
+
+  if (!props.user.username) {
+    return <Navigate to={'/'} replace={true} />
+  }
 
   return (
     <div>

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from "react-router-dom";
-import { Card, Icon } from 'antd';
+import React, { useEffect, useState, useCallback } from 'react';
+import { Navigate, useParams } from "react-router-dom";
+import { ReadOutlined, LikeOutlined, LikeFilled } from '@ant-design/icons';
+import { Card } from 'antd';
 import Nav from '../../components/Nav'
 import { connect } from 'react-redux';
 
@@ -11,7 +12,7 @@ function ScreenArticlesBySource(props) {
   let { id } = useParams();
   const [articleList, setArticleList] = useState([]);
 
-  let likeArticle = async (article) => {
+  let likeArticle = useCallback(async (article) => {
     // look if article is in props.wishlist
     let index = props.wishlist.findIndex(wishlistArticle => wishlistArticle.title === article.title);
     if (index === -1) {
@@ -47,25 +48,27 @@ function ScreenArticlesBySource(props) {
         alert(data.error);
       }
     }
-  }
+  }, [props])
 
   useEffect(() => {
     let getNews = async () => {
       try {
         let rawdata = await fetch(`/news/top-headlines?source=${id}`);
-        let data = await rawdata.json();
+        let response = await rawdata.json();
+        let data = response.data
         if (!data.articles || data.articles.length === 0) {
+          console.log(data)
           alert('No articles found');
           return;
         }
-        let Cards = data.articles.map(article => {
+        let Cards = data.articles.map((article, i) => {
           // check if article is in wishlist
           let index = props.wishlist.findIndex(wishlistArticle => wishlistArticle.title === article.title);
-          let theme = ''
+          let likeIcon;
           if (index === -1) {
-            theme = 'outlined';
+            likeIcon = <LikeOutlined key='likeIcon' onClick={() => likeArticle(article)} />;
           } else {
-            theme = 'filled';
+            likeIcon = <LikeFilled key='likeIcon' onClick={() => likeArticle(article)} />;
           }
           return (
             <Card
@@ -76,6 +79,7 @@ function ScreenArticlesBySource(props) {
                 flexDirection: 'column',
                 justifyContent: 'space-between'
               }}
+              key={i}
               cover={
                 <img
                   alt={article.title}
@@ -83,8 +87,8 @@ function ScreenArticlesBySource(props) {
                 />
               }
               actions={[
-                <Icon type="read" key="ellipsis2" />,
-                <Icon type="like" key="ellipsis" theme={theme} onClick={() => likeArticle(article)} />
+                <ReadOutlined key="ellipsis2" />,
+                likeIcon
               ]}
             >
               <Meta
@@ -101,7 +105,13 @@ function ScreenArticlesBySource(props) {
       }
     }
     getNews();
-  });
+  }, [id, likeArticle, props.wishlist]);
+
+  if (!props.user.username) {
+    return (
+      <Navigate to={'/'} replace={true} />
+    )
+  }
 
   return (
     <div>
