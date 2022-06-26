@@ -5,7 +5,7 @@ let UserModel = require('../models/user');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  res.json({ message: 'Welcome to the API' });
+  res.redirect('/index.html');
 });
 
 router.post('/wishlist-article', async (req, res) => {
