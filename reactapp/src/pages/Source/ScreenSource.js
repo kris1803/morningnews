@@ -5,7 +5,6 @@ import Nav from '../../components/Nav';
 import '../../App.css';
 import styles from './source.module.css';
 
-//import ukraineImg from './img/icons8-ukraine-96.png';
 
 const NEWSAPI_KEY = '3ab465eb2e554f95a1d0f2ac998f1750';
 
