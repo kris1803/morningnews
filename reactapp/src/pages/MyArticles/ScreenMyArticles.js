@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Icon } from 'antd';
-import Nav from '../../components/Nav'
+import Nav from '../../components/Nav';
 import { connect } from 'react-redux';
 
 const { Meta } = Card;

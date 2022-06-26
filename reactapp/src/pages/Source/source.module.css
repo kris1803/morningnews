@@ -7,3 +7,21 @@
 .banner-flag:hover {
     cursor: pointer;
 }
+
+.Banner {
+    height: 80px;
+    background-image: url('/images/flat01.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0.8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.HomeThemes {
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-top: 20px;
+}

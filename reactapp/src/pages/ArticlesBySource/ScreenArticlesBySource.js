@@ -53,7 +53,7 @@ function ScreenArticlesBySource(props) {
   useEffect(() => {
     let getNews = async () => {
       try {
-        let rawdata = await fetch('https://newsapi.org/v2/top-headlines?sources=' + id + '&apiKey=' + NEWSAPI_KEY);
+        let rawdata = await fetch(`https://newsapi.org/v2/top-headlines?sources=${id}&apiKey=${NEWSAPI_KEY}`);
         let data = await rawdata.json();
         let Cards = data.articles.map(article => {
           // check if article is in wishlist

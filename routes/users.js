@@ -29,7 +29,7 @@ router.post('/sign-up', async function (req, res) {
     password: hash,
     token: uid2(32)
   });
-  await user.save((err, user) => {
+  user.save((err, user) => {
     if (err) {
       return res.send({ success: false, error: err });
     } else {
