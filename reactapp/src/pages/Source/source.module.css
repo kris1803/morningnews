@@ -1,0 +1,9 @@
+.banner-flag {
+    height: 80%;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.banner-flag:hover {
+    cursor: pointer;
+}

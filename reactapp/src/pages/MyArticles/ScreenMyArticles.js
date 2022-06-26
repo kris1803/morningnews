@@ -1,7 +1,6 @@
 import React from 'react';
-import './App.css';
 import { Card, Icon } from 'antd';
-import Nav from './Nav'
+import Nav from '../../components/Nav'
 import { connect } from 'react-redux';
 
 const { Meta } = Card;
@@ -10,21 +9,25 @@ function ScreenMyArticles(props) {
 
   let deleteArticle = async (article) => {
     // make delete fetch to '/wishlist-article' with token and article with json encode
-    let rawdata = await fetch(`/wishlist-article`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ token: props.user.token, article: article })
-    });
-    let data = await rawdata.json();
-    if (data.error.length === 0) {
-      // remove article from wishlist
-      props.removeFromWishlist(article);
-    } else {
-      alert(data.error);
+    try {
+      let rawdata = await fetch(`/wishlist-article`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ token: props.user.token, article: article })
+      });
+      let data = await rawdata.json();
+      if (data.error.length === 0) {
+        // remove article from wishlist
+        props.removeFromWishlist(article);
+      } else {
+        alert(data.error);
+      }
+    } catch (error) {
+      console.log(error);
+      alert('Something went wrong. Server connection problem.');
     }
-
   }
 
   let articles = props.wishlist.map(article => {

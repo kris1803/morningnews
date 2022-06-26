@@ -4,13 +4,14 @@ import { Provider } from 'react-redux';
 //import { combineReducers } from 'redux';
 import { configureStore } from '@reduxjs/toolkit'
 import './App.css';
-import ScreenHome from './ScreenHome';
-import ScreenMyArticles from './ScreenMyArticles';
-import ScreenSource from './ScreenSource';
-import ScreenArticlesBySource from './ScreenArticlesBySource';
+import ScreenHome from './pages/Login/ScreenLogin';
+import ScreenMyArticles from './pages/MyArticles/ScreenMyArticles';
+import ScreenSource from './pages/Source/ScreenSource';
+import ScreenArticlesBySource from './pages/ArticlesBySource/ScreenArticlesBySource';
 
 import user from './reducers/user.reducer.js';
 import wishlist from './reducers/wishlist.reducer.js';
+
 let store = configureStore({ reducer: { wishlist, user } } );
 
 function App() {

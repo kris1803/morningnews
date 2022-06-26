@@ -5,3 +5,5 @@ Application en MERN stack, pour voir les news du jour et pouvoir ajouter des art
 
 Le frontend se trouve dans le dossier reactapp/ .
 Pensez à faire npm install et npm start.
+
+test@mail.com test

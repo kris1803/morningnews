@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import './App.css';
 import { Input, Button } from 'antd';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-function ScreenHome(props) {
+function ScreenLogin(props) {
   const [signUpUsername, setSignUpUsername] = useState('');
   const [signUpEmail, setSignUpEmail] = useState('');
   const [signUpPassword, setSignUpPassword] = useState('');
@@ -14,54 +13,55 @@ function ScreenHome(props) {
   const [signInPassword, setSignInPassword] = useState('');
 
   let handleSubmitSignUp = async () => {
-    let rawdata = await fetch('/sign-up', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body:
-        'username=' + signUpUsername +
-        '&password=' + signUpPassword +
-        '&email=' + signUpEmail
-    });
-    let data = await rawdata.json();
-    console.log(data)
-    if (data.success === true) {
-      console.log('setting is login to true')
-      setIsLogin(true);
-      for (let i = 0; i<data.user.articles.length; i++) {
-        props.addToWishlist(data.user.articles[i]);
+    try {
+      let rawdata = await fetch('/sign-up', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: signUpUsername,
+          password: signUpPassword,
+          email: signUpEmail
+        })
+      });
+      let data = await rawdata.json();
+      if (data.success) {
+        setIsLogin(true);
+        for (let i = 0; i < data.user.articles.length; i++) {
+          props.addToWishlist(data.user.articles[i]);
+        }
+      } else {
+        console.log('setting is login to false')
+        setIsLogin(false);
+        alert(data.error);
       }
-    } else {
-      console.log('setting is login to false')
-      setIsLogin(false);
-      alert(data.error);
+    } catch (err) {
+      console.log(err);
+      alert('Server connection error. Try later.')
     }
   };
   let handleSubmitSignIn = async () => {
     let rawdata = await fetch('/sign-in', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/json'
       },
-      body:
-        '&password=' + signInPassword +
-        '&email=' + signInEmail
+      body: JSON.stringify({ email: signInEmail, password: signInPassword })
     });
     let data;
     if (!rawdata.ok) {
       data = { success: false, error: 'Not connected to server. try later.' };
     } else {
-      console.log(rawdata)
+      //console.log(rawdata)
       data = await rawdata.json();
     }
-    
-    console.log(data)
+    //console.log(data)
     if (data.success) {
       setIsLogin(true);
       let user = data.user;
       props.loginUser(user);
-      for (let i =0; i< data.user.articles.length; i++) {
+      for (let i = 0; i < data.user.articles.length; i++) {
         props.addWishList(data.user.articles[i]);
       }
     } else {
@@ -78,7 +78,7 @@ function ScreenHome(props) {
         {/* SIGN-IN */}
         <div className="Sign">
 
-          <Input className="Login-input" placeholder="arthur@lacapsule.com" value={signInEmail} onChange={(e) => setSignInEmail(e.target.value)} />
+          <Input className="Login-input" placeholder="email" value={signInEmail} onChange={(e) => setSignInEmail(e.target.value)} />
 
           <Input.Password className="Login-input" placeholder="password" value={signInPassword} onChange={(e) => setSignInPassword(e.target.value)} />
 
@@ -89,7 +89,7 @@ function ScreenHome(props) {
         {/* SIGN-UP */}
         <div className="Sign">
 
-          <Input className="Login-input" placeholder="Arthur G" value={signUpUsername} onChange={(e) => setSignUpUsername(e.target.value)} />
+          <Input className="Login-input" placeholder="Username" value={signUpUsername} onChange={(e) => setSignUpUsername(e.target.value)} />
           <Input className="Login-input" placeholder="email@mail.com" value={signUpEmail} onChange={(e) => setSignUpEmail(e.target.value)} />
 
           <Input.Password className="Login-input" placeholder="password" value={signUpPassword} onChange={(e) => setSignUpPassword(e.target.value)} />
@@ -123,4 +123,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ScreenHome);
+export default connect(mapStateToProps, mapDispatchToProps)(ScreenLogin);

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
-import './App.css';
 import { Card, Icon } from 'antd';
-import Nav from './Nav'
+import Nav from '../../components/Nav'
 import { connect } from 'react-redux';
+
+const NEWSAPI_KEY = '3ab465eb2e554f95a1d0f2ac998f1750';
 
 const { Meta } = Card;
 
@@ -21,7 +22,7 @@ function ScreenArticlesBySource(props) {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ token: props.user.token, article:article })
+        body: JSON.stringify({ token: props.user.token, article: article })
       });
       let data = await rawdata.json();
       if (data.success) {
@@ -37,7 +38,7 @@ function ScreenArticlesBySource(props) {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ token: props.user.token, article:article })
+        body: JSON.stringify({ token: props.user.token, article: article })
       });
       let data = await rawdata.json();
       if (data.success) {
@@ -46,50 +47,55 @@ function ScreenArticlesBySource(props) {
       } else {
         alert(data.error);
       }
-     }
+    }
   }
 
   useEffect(() => {
     let getNews = async () => {
-      let rawdata = await fetch('https://newsapi.org/v2/top-headlines?sources=' + id + '&apiKey=3ab465eb2e554f95a1d0f2ac998f1750');
-      let data = await rawdata.json();
-      let Cards = data.articles.map(article => {
-        // check if article is in wishlist
-        let index = props.wishlist.findIndex(wishlistArticle => wishlistArticle.title === article.title);
-        let theme = ''
-        if (index === -1) {
-          theme = 'outlined';
-        } else {
-          theme = 'filled';
-        }
-        return (
-          <Card
-            style={{
-              width: 300,
-              margin: '15px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between'
-            }}
-            cover={
-              <img
-                alt={article.title}
-                src={article.urlToImage}
+      try {
+        let rawdata = await fetch('https://newsapi.org/v2/top-headlines?sources=' + id + '&apiKey=' + NEWSAPI_KEY);
+        let data = await rawdata.json();
+        let Cards = data.articles.map(article => {
+          // check if article is in wishlist
+          let index = props.wishlist.findIndex(wishlistArticle => wishlistArticle.title === article.title);
+          let theme = ''
+          if (index === -1) {
+            theme = 'outlined';
+          } else {
+            theme = 'filled';
+          }
+          return (
+            <Card
+              style={{
+                width: 300,
+                margin: '15px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between'
+              }}
+              cover={
+                <img
+                  alt={article.title}
+                  src={article.urlToImage}
+                />
+              }
+              actions={[
+                <Icon type="read" key="ellipsis2" />,
+                <Icon type="like" key="ellipsis" theme={theme} onClick={() => likeArticle(article)} />
+              ]}
+            >
+              <Meta
+                title={<a href={article.url} target='_blank' rel='noopener noreferrer'>{article.title}</a>}
+                description={article.description}
               />
-            }
-            actions={[
-              <Icon type="read" key="ellipsis2" />,
-              <Icon type="like" key="ellipsis" theme={theme} onClick={() => likeArticle(article)} />
-            ]}
-          >
-            <Meta
-              title={<a href={article.url} target='_blank' rel='noopener noreferrer'>{article.title}</a>}
-              description={article.description}
-            />
-          </Card>
-        );
-      })
-      setArticleList(Cards);
+            </Card>
+          );
+        })
+        setArticleList(Cards);
+      } catch (err) {
+        console.log(err);
+        alert('Server connection error.')
+      }
     }
     getNews();
   });

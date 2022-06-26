@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import {Link} from 'react-router-dom';
-import './App.css';
 import { List, Avatar } from 'antd';
-import Nav from './Nav'
-import franceImg from './img/icons8-france-96.png';
-import gbImg from './img/icons8-great-britain-96.png';
+import Nav from '../../components/Nav';
+import '../../App.css';
+import styles from './source.module.css';
+
 //import ukraineImg from './img/icons8-ukraine-96.png';
 
+const NEWSAPI_KEY = '3ab465eb2e554f95a1d0f2ac998f1750';
 
 function ScreenSource() {
   const [sourceList, setSourceList] = useState([]);
@@ -14,10 +15,20 @@ function ScreenSource() {
   useEffect(() => {
 
     let getNews = async () => {
-      let rawdata = await fetch('https://newsapi.org/v2/top-headlines/sources?apiKey=3ab465eb2e554f95a1d0f2ac998f1750&country=fr');
+      try {
+      let country = 'fr';
+      let rawdata = await fetch(`https://newsapi.org/v2/top-headlines/sources?apiKey=${NEWSAPI_KEY}&country=${country}`);
+      if (!rawdata.ok) {
+        alert('Something went wrong. Server connection problem.');
+        return;
+      }
       let data = await rawdata.json();
       setSourceList(data.sources);
-      console.log(data.sources);
+      } catch (err) {
+        console.log(err);
+        alert('An error occured. Please try again later.');
+      }
+      //console.log(data.sources);
     }
     getNews();
     
@@ -25,10 +36,10 @@ function ScreenSource() {
 
   let handleFlagClick = (country) => {
     let getNews = async () => {
-      let rawdata = await fetch('https://newsapi.org/v2/top-headlines/sources?apiKey=16f56ca733924bb6a0e667f077c5cb18&country=' + country);
+      let rawdata = await fetch('https://newsapi.org/v2/top-headlines/sources?apiKey='+NEWSAPI_KEY+'&country=' + country);
       let data = await rawdata.json();
       setSourceList(data.sources);
-      console.log(data.sources);
+      //console.log(data.sources);
     }
     getNews();
   }
@@ -38,8 +49,8 @@ function ScreenSource() {
       <Nav />
 
       <div className="Banner" >
-        <img src={franceImg} alt='France flag' style={{height: "80%"}} onClick={() => handleFlagClick('fr')} />
-        <img alt='GB flag' src={gbImg} style={{height: "80%"}} onClick={() => handleFlagClick('gb')} />
+        <img src={'/images/icons8-france-96.png'} className={styles['banner-flag']} alt='FR flag' onClick={() => handleFlagClick('fr')} />
+        <img alt='GB flag' src={'/images/icons8-great-britain-96.png'} className={styles['banner-flag']} onClick={() => handleFlagClick('gb')} />
         {/*<img alt='Ukr flag' src={ukraineImg} style={{height: '80%'}} onClick={() => handleFlagClick('ua')} /> */}
       </div>
       <div className="HomeThemes">
