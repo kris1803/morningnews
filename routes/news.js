@@ -2,7 +2,7 @@ let express = require('express');
 let router = express.Router();
 const axios = require('axios');
 
-const NEWSAPI_KEY = process.env.NEWSAPI_KEY || '3ab465eb2e554f95a1d0f2ac998f1750';
+const NEWSAPI_KEY = process.env.NEWSAPI_KEY;
 
 router.get('/', (req, res) => {
    res.redirect('/');
